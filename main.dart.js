@@ -145225,11 +145225,11 @@ var $async$$0=A.i(function(a,b){if(a===1)return A.j(b,r)
 for(;;)switch(s){case 0:if($.aY==null)A.ab5()
 $.aY.toString
 q=A.aaT()
-if(q.gfR(q)==="/bank-callback"&&q.gwK(q).length!==0){p=window.history
-p.toString
-o=q.gHu(q)
-n=q.gwK(q)
-p.replaceState(new A.d4Q([],[]).a3W(null),"",o+"/#/bank-callback?"+n)}s=2
+if(q.gfR(q)==="/bank-callback"&&q.gwK(q).length!==0){p=q.gHu(q)
+o=q.gwK(q)
+n=window.history
+n.toString
+n.replaceState(new A.d4Q([],[]).a3W(null),"",p+"/#/bank-callback?"+o)}s=2
 return A.e($.dzD().a1z(0,"app.env"),$async$$0)
 case 2:if($.alE() instanceof A.FD){$.dR8=A.ejn()
 $.alb=$.al1=null}if($.alM() instanceof A.FD)$.dSX=A.ejm()
