@@ -106287,7 +106287,7 @@ aMc(a){return A.a6(new A.bmJ(this,a),t.HA)}}
 A.bmH.prototype={
 $0(){var s=0,r=A.m(t.nb),q,p=this,o,n
 var $async$$0=A.i(function(a,b){if(a===1)return A.j(b,r)
-for(;;)switch(s){case 0:o=p.a.a.V("installment_purchases").bm(0,"*, accounts(name), categories(name, color), entities(name, color), recurring_transactions(installment_number, is_active, next_run_date)").a0("wallet_id",p.b)
+for(;;)switch(s){case 0:o=p.a.a.V("installment_purchases").bm(0,"*, accounts(name), categories(name, color), entities(name, color), recurring_transactions!installment_purchases_recurring_transaction_id_fkey(installment_number, is_active, next_run_date)").a0("wallet_id",p.b)
 n=J
 s=3
 return A.e(A.cj(o.cp(o.cq("deleted_at","is.null")),o.$ti.c).ez(0,"first_installment_date",!1),$async$$0)
