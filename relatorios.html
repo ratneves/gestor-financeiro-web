@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catálogo de Relatórios — Gestor Financeiro</title>
+<style>
+  :root {
+    --bg: #f4f6f9;
+    --surface: #ffffff;
+    --surface-2: #eef1f5;
+    --text: #1a2331;
+    --text-muted: #5b6472;
+    --text-faint: #8791a0;
+    --accent: #1e5aa8;
+    --accent-soft: #e3ecf8;
+    --border: #dde2e9;
+    --mono-bg: #eef1f6;
+    --tag-real-bg: #e4f2e9;
+    --tag-real-text: #1f6b41;
+    --tag-assume-bg: #fbeee0;
+    --tag-assume-text: #8a4b12;
+    --shadow: 0 1px 2px rgba(20, 30, 50, 0.06);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10151f;
+      --surface: #171d29;
+      --surface-2: #1e2531;
+      --text: #e7ebf2;
+      --text-muted: #9aa5b5;
+      --text-faint: #6c7686;
+      --accent: #6ea3e8;
+      --accent-soft: #1c2c42;
+      --border: #2a3242;
+      --mono-bg: #1c2330;
+      --tag-real-bg: #163224;
+      --tag-real-text: #6fcf97;
+      --tag-assume-bg: #35270f;
+      --tag-assume-text: #e0a860;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .heading-font {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  }
+
+  .mono {
+    font-family: "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .page {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 56px 28px 96px;
+  }
+
+  header.intro {
+    margin-bottom: 40px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  header.intro .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  header.intro h1 {
+    font-size: 34px;
+    margin: 0 0 12px;
+    text-wrap: balance;
+    font-weight: 600;
+  }
+
+  header.intro p {
+    max-width: 62ch;
+    color: var(--text-muted);
+    margin: 0 0 4px;
+    font-size: 15.5px;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 28px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat .n {
+    font-size: 22px;
+    font-weight: 700;
+    font-family: "Iowan Old Style", Georgia, serif;
+  }
+
+  .stat .l {
+    font-size: 12px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .legend {
+    display: flex;
+    gap: 18px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+    color: var(--text-muted);
+  }
+
+  .legend .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .legend .dot.real { background: var(--tag-real-text); }
+  .legend .dot.assume { background: var(--tag-assume-text); }
+
+  nav.toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 48px;
+  }
+
+  nav.toc a {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 999px;
+    box-shadow: var(--shadow);
+  }
+
+  nav.toc a:hover, nav.toc a:focus-visible {
+    color: var(--accent);
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  section.category {
+    margin-bottom: 44px;
+    scroll-margin-top: 20px;
+  }
+
+  section.category h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+
+  section.category .cat-count {
+    font-size: 13px;
+    color: var(--text-faint);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+    margin-left: 8px;
+  }
+
+  .cat-rule {
+    height: 1px;
+    background: var(--border);
+    margin: 10px 0 18px;
+  }
+
+  .report-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .report {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .report-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .report-head h3 {
+    margin: 0;
+    font-size: 16.5px;
+    font-weight: 600;
+    font-family: "Iowan Old Style", Georgia, serif;
+  }
+
+  .report-head .path {
+    font-size: 11.5px;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+
+  .report p.what {
+    margin: 6px 0 10px;
+    color: var(--text);
+    font-size: 14.5px;
+  }
+
+  .report .data-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    align-items: center;
+    font-size: 12.5px;
+  }
+
+  .report .data-line .label {
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 11px;
+    margin-right: 2px;
+  }
+
+  .tag {
+    background: var(--mono-bg);
+    color: var(--text-muted);
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-size: 12px;
+  }
+
+  .tag.real { background: var(--tag-real-bg); color: var(--tag-real-text); }
+  .tag.assume { background: var(--tag-assume-bg); color: var(--tag-assume-text); }
+
+  .extra-row {
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .extra-row b {
+    color: var(--text-faint);
+    font-weight: 600;
+    margin-right: 4px;
+  }
+
+  footer.note {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-faint);
+  }
+
+  @media (max-width: 600px) {
+    .page { padding: 36px 16px 72px; }
+    header.intro h1 { font-size: 27px; }
+    .stats-row { gap: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="intro">
+    <p class="eyebrow heading-font">Gestor Financeiro</p>
+    <h1 class="heading-font">Catálogo de Relatórios</h1>
+    <p>Todos os relatórios disponíveis na aplicação — o que cada um mostra, de onde vêm os números, que filtros tem e se dá para ver os movimentos por trás do valor.</p>
+    <div class="stats-row">
+      <div class="stat"><span class="n heading-font">51</span><span class="l">relatórios</span></div>
+      <div class="stat"><span class="n heading-font">9</span><span class="l">categorias</span></div>
+    </div>
+    <div class="legend">
+      <span><span class="dot real"></span>dado real, calculado a partir da base de dados</span>
+      <span><span class="dot assume"></span>presunção assumida quando não há dado real (sempre sinalizado)</span>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <a href="#visao-geral">Visão geral</a>
+    <a href="#categorias">Categorias e etiquetas</a>
+    <a href="#contas">Contas e cartões</a>
+    <a href="#movimentos">Movimentos</a>
+    <a href="#entidades">Entidades</a>
+    <a href="#orcamentos">Orçamentos</a>
+    <a href="#patrimonio">Património</a>
+    <a href="#investimentos">Investimentos e poupança</a>
+    <a href="#metas">Metas e projetos</a>
+  </nav>
+
+  <section class="category" id="visao-geral">
+    <h2>Visão geral <span class="cat-count">15 relatórios</span></h2>
+    <div class="cat-rule"></div>
+    <div class="report-list">
+
+      <div class="report">
+        <div class="report-head"><h3>Fluxo de caixa mensal</h3><span class="path mono">/reports/cashflow</span></div>
+        <p class="what">Receitas vs. despesas dos últimos 12 meses, em barras lado a lado por mês.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">soma de ledger_entries por mês/tipo</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período</span><span><b>Drill-down</b>sim, por mês</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Evolução do saldo</h3><span class="path mono">/reports/balance-trend</span></div>
+        <p class="what">Património acumulado (saldo de contas) ao longo do tempo.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">saldo real reconstruído a partir dos movimentos</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Previsão de saldo</h3><span class="path mono">/reports/balance-forecast</span></div>
+        <p class="what">Projeção do saldo à frente no tempo, juntando tudo o que já está agendado.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">recorrências ativas + prestações de empréstimos + lembretes com valor + renovações de seguros</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Relatório de Património Líquido</h3><span class="path mono">/reports/net-worth</span></div>
+        <p class="what">Fotografia atual: Ativos − Passivos (contas + bens − dívida em empréstimos).</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">saldos de contas ativas + valor de bens/ativos + dívida em empréstimos ativos, calculado na hora</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Histórico de Património Líquido</h3><span class="path mono">/reports/net-worth-history</span></div>
+        <p class="what">Tendência real do património líquido — diferente do anterior por ser histórico guardado, não recalculado sempre.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">snapshot diário automático (tarefa agendada às 03h) guardado em net_worth_snapshots</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período</span><span><b>Nota</b>só acumula a partir do dia em que a tarefa começou a correr</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Relatório de Performance Anual</h3><span class="path mono">/reports/annual-performance</span></div>
+        <p class="what">Resumo do ano atual comparado com o ano anterior, incluindo maiores categorias de despesa.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">fluxo de caixa mensal (ano atual vs. anterior) + breakdown de categorias</span></div>
+        <div class="extra-row"><span><b>Drill-down</b>sim, por ano e por categoria</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Relatório de Comparação Ano Atual vs Anterior</h3><span class="path mono">/reports/year-over-year</span></div>
+        <p class="what">Evolução ano a ano, período configurável, arredondado a anos completos.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">fluxo de caixa mensal, agregado por ano civil</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período</span><span><b>Drill-down</b>sim, por ano</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Relatório de Análise de Inflação</h3><span class="path mono">/reports/inflation-analysis</span></div>
+        <p class="what">Proxy pessoal de "custo de vida" — não é o IPC oficial, é a variação real da sua própria despesa.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">variação mês-a-mês da despesa total + variação ano-a-ano por categoria, sempre com aviso de que não é o IPC oficial</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Taxa de Poupança</h3><span class="path mono">/reports/savings-rate</span></div>
+        <p class="what">(Receitas − Despesas) / Receitas, mês a mês, com média do período.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">fluxo de caixa mensal real</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período</span><span><b>Drill-down</b>sim, por mês</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>IRS / Dedutíveis</h3><span class="path mono">/reports/irs-deductions</span></div>
+        <p class="what">Total anual por campo de IRS, a partir das categorias que classificou como dedutíveis.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">mapeamento categoria → campo IRS + despesas reais nessas categorias no ano fiscal</span></div>
+        <div class="extra-row"><span><b>Filtros</b>ano fiscal</span><span><b>Drill-down</b>sim, por campo</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Simulador de Reforma / Independência Financeira</h3><span class="path mono">/reports/fire-simulator</span></div>
+        <p class="what">Quantos anos até à independência financeira, ao ritmo atual de poupança.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">património atual + poupança média/mês reais</span> <span class="tag assume">retorno de investimento, despesa em reforma e taxa de levantamento — assunções que pode ajustar</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Simulador "E Se"</h3><span class="path mono">/reports/what-if</span></div>
+        <p class="what">Três cenários: aumento salarial, amortização antecipada de empréstimo, novo empréstimo.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">rendimento/despesa reais + empréstimo real escolhido</span> <span class="tag assume">o valor do aumento/amortização/novo empréstimo é o que introduzir</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Score de Saúde Financeira</h3><span class="path mono">/reports/financial-health-score</span></div>
+        <p class="what">Pontuação 0–100, média de 3 subpontuações visíveis individualmente: poupança, dívida/rendimento, fundo de emergência.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">as 3 subpontuações, cada uma 100% real</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Fundo de Emergência</h3><span class="path mono">/reports/emergency-fund</span></div>
+        <p class="what">Quantos meses de despesas tem cobertos pela poupança líquida.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">saldo real de contas correntes/poupança + despesa média real (6 meses)</span> <span class="tag assume">meta em meses, ajustável (1–12, padrão 3)</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Calendário de Fluxo de Caixa</h3><span class="path mono">/reports/cashflow-calendar</span></div>
+        <p class="what">Vista de calendário mês a mês: o que entra e sai, dia a dia.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">recorrências ativas + prestações de empréstimos + lembretes com valor + renovações de seguros</span></div>
+        <div class="extra-row"><span><b>Drill-down</b>sim, toque num dia</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="category" id="categorias">
+    <h2>Categorias e etiquetas <span class="cat-count">6 relatórios</span></h2>
+    <div class="cat-rule"></div>
+    <div class="report-list">
+
+      <div class="report">
+        <div class="report-head"><h3>Despesas por categoria</h3><span class="path mono">/reports/expenses-by-category</span></div>
+        <p class="what">Distribuição das despesas por categoria, num período (gráfico circular).</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">breakdown de categoria, tipo despesa</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, categorias</span><span><b>Drill-down</b>sim, por categoria</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Receitas por categoria</h3><span class="path mono">/reports/income-by-category</span></div>
+        <p class="what">O mesmo, para receitas.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">breakdown de categoria, tipo receita</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, categorias</span><span><b>Drill-down</b>sim, por categoria</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Tendência por categoria</h3><span class="path mono">/reports/category-trend</span></div>
+        <p class="what">Escolhe uma categoria, vê a evolução mensal dela sozinha, ao longo do tempo.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">movimentos reais dessa categoria (incl. splits), mês a mês</span></div>
+        <div class="extra-row"><span><b>Filtros</b>categoria (obrigatório), período</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Relatório de Categoria por Mês</h3><span class="path mono">/reports/category-monthly</span></div>
+        <p class="what">Compara várias categorias lado a lado, mês a mês (barras agrupadas). Por defeito mostra as 5 maiores do período.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">tendência mensal real por categoria selecionada</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, categorias</span><span><b>Drill-down</b>sim, resumo do período e por mês/categoria</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Por Etiqueta</h3><span class="path mono">/reports/tag-breakdown</span></div>
+        <p class="what">Distribuição dos movimentos por etiqueta livre (não é categoria).</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">etiquetas reais nos movimentos do período</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, etiquetas</span><span><b>Drill-down</b>sim</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Por Centro de Custo</h3><span class="path mono">/reports/cost-centers</span></div>
+        <p class="what">Distribuição por centro de custo (útil para separar despesa pessoal/negócio/projeto).</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">movimentos reais com centro de custo atribuído</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, tipo, centros de custo</span><span><b>Drill-down</b>sim</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="category" id="contas">
+    <h2>Contas e cartões <span class="cat-count">4 relatórios</span></h2>
+    <div class="cat-rule"></div>
+    <div class="report-list">
+
+      <div class="report">
+        <div class="report-head"><h3>Comparativo de contas</h3><span class="path mono">/reports/accounts</span></div>
+        <p class="what">Saldo e total de movimentos, lado a lado, por conta.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">saldos e totais reais por conta, período</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Contas — tendência de saldo</h3><span class="path mono">/reports/account-balance-trend</span></div>
+        <p class="what">Evolução real do saldo por conta, mês a mês — não é fotografia única como o anterior.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">saldo atual reconstruído para trás via ledger_entries, mês a mês</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, contas (até 5 por defeito)</span><span><b>Drill-down</b>sim, por mês</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Cartões de crédito</h3><span class="path mono">/reports/credit-cards</span></div>
+        <p class="what">Limite vs. utilizado por cartão, e evolução do saldo.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">limite e saldo reais das contas tipo "cartão"</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, cartões</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Câmbio / ganho-perda cambial</h3><span class="path mono">/reports/exchange-rate</span></div>
+        <p class="what">Ganho/perda cambial nas contas em moeda diferente da carteira, dado o movimento das taxas.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">taxas de câmbio guardadas + saldo real das contas em moeda estrangeira</span></div>
+        <div class="extra-row"><span><b>Nota</b>vazio se não houver contas em moeda estrangeira</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="category" id="movimentos">
+    <h2>Movimentos <span class="cat-count">6 relatórios</span></h2>
+    <div class="cat-rule"></div>
+    <div class="report-list">
+
+      <div class="report">
+        <div class="report-head"><h3>Maiores movimentos</h3><span class="path mono">/reports/top-transactions</span></div>
+        <p class="what">Lista ordenada dos movimentos de maior valor, num período.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">movimentos reais, ordenados por valor absoluto</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Recorrentes vs. pontuais</h3><span class="path mono">/reports/source-breakdown</span></div>
+        <p class="what">De onde vêm os seus movimentos: manual, regra automática, importação ou recorrência.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">campo "origem" real de cada movimento</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Relatório de Análise por Dia da Semana</h3><span class="path mono">/reports/weekday-analysis</span></div>
+        <p class="what">Em que dias da semana gasta mais.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">despesas reais do período, agrupadas por dia da semana</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período</span><span><b>Drill-down</b>sim, por dia da semana</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Relatório de Detecção de Anomalias</h3><span class="path mono">/reports/anomaly-detection</span></div>
+        <p class="what">Movimentos fora do padrão: outliers estatísticos (2 desvios-padrão da média da categoria) e possíveis duplicados.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">média/desvio-padrão reais por categoria + comparação categoria/entidade/valor</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período</span><span><b>Drill-down</b>sim, toca no movimento</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Qualidade de dados</h3><span class="path mono">/reports/data-quality</span></div>
+        <p class="what">Movimentos por classificar (sem categoria ou marcados "Importado"), sem entidade, importações pendentes, duplicados por resolver.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">contagens reais em cada situação</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período (para as contagens de movimentos)</span><span><b>Drill-down</b>sim, todas as linhas</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Subscrições / Recorrentes</h3><span class="path mono">/reports/recurring</span></div>
+        <p class="what">Compromisso mensal total, próximas ocorrências, e evolução real do custo ao longo do tempo.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">recorrências reais + movimentos já gerados por elas</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, estado (ativas/pausadas)</span><span><b>Drill-down</b>sim, por mês</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="category" id="entidades">
+    <h2>Entidades <span class="cat-count">3 relatórios</span></h2>
+    <div class="cat-rule"></div>
+    <div class="report-list">
+
+      <div class="report">
+        <div class="report-head"><h3>Top entidades</h3><span class="path mono">/reports/entities</span></div>
+        <p class="what">Maiores valores por entidade/beneficiário, num período.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">totais reais por entidade</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Relatório de Entidade por Mês</h3><span class="path mono">/reports/entity-monthly</span></div>
+        <p class="what">Gastos com uma ou mais entidades, mês a mês.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">movimentos reais por entidade, mês a mês</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, tipo, entidades</span><span><b>Drill-down</b>sim</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Entidades — frequência</h3><span class="path mono">/reports/entity-frequency</span></div>
+        <p class="what">Ranking por número de vezes que comprou/pagou a cada entidade — não por valor, por frequência.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">contagem real de movimentos por entidade</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, tipo de entidade</span><span><b>Drill-down</b>sim</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="category" id="orcamentos">
+    <h2>Orçamentos <span class="cat-count">2 relatórios</span></h2>
+    <div class="cat-rule"></div>
+    <div class="report-list">
+
+      <div class="report">
+        <div class="report-head"><h3>Orçamento vs. realizado</h3><span class="path mono">/reports/budget-vs-actual</span></div>
+        <p class="what">Compara o que orçamentou com o que gastou de facto, por linha de orçamento.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">orçamentos reais + gasto real do período, incl. transição de saldo não gasto quando ativada</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Orçamentos por conta vs por categoria</h3><span class="path mono">/reports/budget-scope</span></div>
+        <p class="what">Os dois âmbitos de orçamento (por categoria e por conta) lado a lado, num só ecrã.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">mesmos orçamentos reais, agrupados por âmbito</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período</span><span><b>Drill-down</b>sim, por item</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="category" id="patrimonio">
+    <h2>Património <span class="cat-count">8 relatórios</span></h2>
+    <div class="cat-rule"></div>
+    <div class="report-list">
+
+      <div class="report">
+        <div class="report-head"><h3>Empréstimos</h3><span class="path mono">/reports/loans</span></div>
+        <p class="what">Capital em dívida por empréstimo, pessoal e habitação, fotografia atual.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">saldo em dívida real de cada empréstimo ativo</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Evolução da dívida (empréstimos)</h3><span class="path mono">/reports/loan-balance-trend</span></div>
+        <p class="what">Capital em dívida mês a mês — reconstruído a partir dos pagamentos reais, não uma fotografia única.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">loan_payments reais (capital/juros por prestação, amortização francesa, taxa Euribor real quando aplicável)</span> <span class="tag assume">Cofidis: sem taxa conhecida, presume-se 0% — sinalizado</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, empréstimos</span><span><b>Drill-down</b>sim, por mês/pagamento</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Rácio Dívida/Rendimento</h3><span class="path mono">/reports/debt-to-income</span></div>
+        <p class="what">Prestações mensais totais face ao rendimento médio real, com bandas de referência (&lt;36% saudável, 36–43% atenção, &gt;43% elevado).</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">prestações reais dos empréstimos ativos ÷ rendimento médio real (6 meses)</span></div>
+        <div class="extra-row"><span><b>Drill-down</b>sim, contribuição por empréstimo</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Plano de Pagamento de Dívida</h3><span class="path mono">/reports/debt-payoff-planner</span></div>
+        <p class="what">Compara estratégia "bola de neve" (menor saldo primeiro) vs. "avalanche" (maior juro primeiro).</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">saldo, taxa e prestação mínima reais de cada empréstimo</span> <span class="tag assume">pagamento extra mensal — valor que introduzir</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Seguros</h3><span class="path mono">/reports/insurance</span></div>
+        <p class="what">Custo anual por tipo de seguro, fotografia atual.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">prémios reais das apólices ativas</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Seguros — evolução de prémios</h3><span class="path mono">/reports/insurance-trend</span></div>
+        <p class="what">Custo mensal projetado dos prémios ao longo do tempo.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">prémio/frequência/data de início reais de cada apólice</span> <span class="tag assume">projeção — não há histórico de pagamento individual guardado</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, apólices</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Ativos</h3><span class="path mono">/reports/assets</span></div>
+        <p class="what">Valor atual por tipo de ativo, fotografia atual.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">valor atual real de cada bem/ativo</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Ativos — valorização</h3><span class="path mono">/reports/asset-valuation</span></div>
+        <p class="what">Evolução do valor de cada ativo desde a compra.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">curva real quando há fórmula de desvalorização definida</span> <span class="tag assume">reta simples compra→atual quando o valor é só manual (sem pontos intermédios inventados)</span></div>
+        <div class="extra-row"><span><b>Filtros</b>ativos</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="category" id="investimentos">
+    <h2>Investimentos e poupança <span class="cat-count">3 relatórios</span></h2>
+    <div class="cat-rule"></div>
+    <div class="report-list">
+
+      <div class="report">
+        <div class="report-head"><h3>Relatório de Investimentos</h3><span class="path mono">/reports/investment-performance</span></div>
+        <p class="what">Desempenho da carteira, ganhos/perdas e diversificação por posição.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">lotes de investimento reais + cotações de mercado guardadas</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Rebalanceamento de Carteira</h3><span class="path mono">/reports/portfolio-rebalance</span></div>
+        <p class="what">Calculadora pura: alocação atual real vs. alvo escolhido por si, € a comprar/vender por posição. <b>Não é conselho de investimento</b> — é aritmética sobre os alvos que definir.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">valor de mercado real de cada posição</span> <span class="tag assume">percentagem-alvo é sua, editável por posição</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Relatório de Poupança</h3><span class="path mono">/reports/savings</span></div>
+        <p class="what">Acompanhamento de poupanças, certificados, depósitos.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">categorias tipo "poupança" + contas tipo "poupança" reais</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, categorias</span><span><b>Drill-down</b>sim</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="category" id="metas">
+    <h2>Metas e projetos <span class="cat-count">4 relatórios</span></h2>
+    <div class="cat-rule"></div>
+    <div class="report-list">
+
+      <div class="report">
+        <div class="report-head"><h3>Projetos</h3><span class="path mono">/reports/projects</span></div>
+        <p class="what">Receitas, despesas e orçamento por projeto.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">totais reais por projeto</span></div>
+        <div class="extra-row"><span><b>Filtros</b>estado do projeto</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Relatório de Metas Financeiras</h3><span class="path mono">/reports/financial-goals</span></div>
+        <p class="what">Acompanhamento de objetivos (poupança, investimento, etc.) — contribuições manuais + movimentos ligados.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">contribuições reais + movimentos ligados a cada meta</span></div>
+        <div class="extra-row"><span><b>Filtros</b>metas</span><span><b>Drill-down</b>sim, por meta</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Metas — ETA (tempo estimado)</h3><span class="path mono">/reports/goal-eta</span></div>
+        <p class="what">Previsão de quando cada meta será atingida, ao ritmo real de contribuições dos últimos 6 meses.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">ritmo médio real de contribuição por meta</span></div>
+        <div class="extra-row"><span><b>Nota</b>mostra "sem dados suficientes" em vez de inventar uma data, se não há histórico</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head"><h3>Timesheet / Faturação</h3><span class="path mono">/reports/timesheet</span></div>
+        <p class="what">Horas registadas, valor faturável e estado das faturas, por projeto/cliente.</p>
+        <div class="data-line"><span class="label">Dados</span><span class="tag real">registos de horas reais + faturas reais</span></div>
+        <div class="extra-row"><span><b>Filtros</b>período, projetos, clientes</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="note">
+    Todos os relatórios seguem a mesma regra: números marcados como reais vêm sempre de uma consulta direta à base de dados; quando não há dado real suficiente, o relatório mostra um estado vazio honesto em vez de inventar valores. As poucas exceções (marcadas a laranja) são sempre visíveis no próprio ecrã, nunca escondidas.
+  </footer>
+
+</div>
+</body>
+</html>
