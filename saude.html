@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Resumo de saúde</title>
+<style>
+:root{--ink:#14202e;--soft:#56657a;--line:#dde3ea;--bg:#f5f7fa;--card:#fff;--ok:#1e7d4f;--mild:#a07a00;--warn:#c25e00;--bad:#b3261e}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e8edf3;--soft:#a3b0c0;--line:#2a3646;--bg:#0f1620;--card:#16202c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:920px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:18px;margin:28px 0 8px}
+.muted{color:var(--soft)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.k{font-size:12px;color:var(--soft)}.v{font-size:22px;font-weight:700}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:10px;font-size:14px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--soft);font-weight:600}
+.ok{color:var(--ok)}.mild{color:var(--mild)}.warn{color:var(--warn)}.bad{color:var(--bad);font-weight:700}
+footer{margin-top:32px;font-size:12px;color:var(--soft)}
+@media print{body{background:#fff}.card,table{border-color:#ccc}}
+</style>
+</head>
+<body>
+<main id="app"><p class="muted">A carregar…</p></main>
+<script>
+// Read-only health summary shared from the app (Saúde → Partilhar). The
+// edge function health-share validates the token and returns the content.
+(function () {
+  var FUNCTION_URL = 'https://vlqwpuqxeranhgtopkuj.supabase.co/functions/v1/health-share';
+  var app = document.getElementById('app');
+  var token = new URLSearchParams(location.search).get('t') || '';
+  if (!/^[0-9a-f]{48}$/.test(token)) {
+    app.innerHTML = '<h1>Link inválido</h1>';
+    return;
+  }
+  fetch(FUNCTION_URL + '?format=json&t=' + encodeURIComponent(token))
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      document.title = data.title || 'Resumo de saúde';
+      app.innerHTML = data.body || '<h1>Sem dados</h1>';
+    })
+    .catch(function () {
+      app.innerHTML = '<h1>Não foi possível carregar</h1><p class="muted">Verifique a ligação e tente outra vez.</p>';
+    });
+})();
+</script>
+</body>
+</html>
