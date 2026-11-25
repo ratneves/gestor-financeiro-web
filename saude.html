@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
 <title>Resumo de saúde</title>
 <style>
 :root{--ink:#14202e;--soft:#56657a;--line:#dde3ea;--bg:#f5f7fa;--card:#fff;--ok:#1e7d4f;--mild:#a07a00;--warn:#c25e00;--bad:#b3261e}
@@ -33,12 +34,18 @@ footer{margin-top:32px;font-size:12px;color:var(--soft)}
 (function () {
   var FUNCTION_URL = 'https://vlqwpuqxeranhgtopkuj.supabase.co/functions/v1/health-share';
   var app = document.getElementById('app');
-  var token = new URLSearchParams(location.search).get('t') || '';
+  var token = new URLSearchParams(location.hash.slice(1)).get('t') || new URLSearchParams(location.search).get('t') || '';
+  // Legacy query links still open, but remove the credential from the address
+  // immediately; new links use a fragment which is not sent to the web server.
+  history.replaceState(null, '', location.pathname);
   if (!/^[0-9a-f]{48}$/.test(token)) {
     app.innerHTML = '<h1>Link inválido</h1>';
     return;
   }
-  fetch(FUNCTION_URL + '?format=json&t=' + encodeURIComponent(token))
+  fetch(FUNCTION_URL + '?format=json', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: token }), referrerPolicy: 'no-referrer', cache: 'no-store'
+  })
     .then(function (r) { return r.json(); })
     .then(function (data) {
       document.title = data.title || 'Resumo de saúde';
