@@ -1,11 +1,11 @@
 {
-    "name": "Gestor Financeiro",
-    "short_name": "Gestor Financeiro",
+    "name": "Assistente Pessoal",
+    "short_name": "Assistente Pessoal",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#002A54",
     "theme_color": "#002A54",
-    "description": "Gestor Financeiro — plataforma de gestão financeira pessoal.",
+    "description": "Assistente Pessoal — plataforma de gestão financeira pessoal.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "shortcuts": [
